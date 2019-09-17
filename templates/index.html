@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <link rel="stylesheet" type="text/css" href="static/fullpage.min.css" />
+    <link rel="stylesheet" type="text/css" href="static/examples.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <script src="static/pinhole.js"></script>
+    
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<style>
+.flex-container {
+  display: flex;
+  background-color: DodgerBlue;
+}
+
+.flex-container > div {
+  background-color: #f1f1f1;
+  margin: 10px;
+  padding: 20px;
+  font-size: 30px;
+}
+
+.floatCard {
+  background-color: #38477f;
+  box-shadow: 0 1px 10px #3acdc8;
+  -webkit-transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+  border-radius: 10px;
+  /* border-color: #3acdc8; */
+}
+
+.floatCard::after {
+  box-shadow: 0 5px 20px #3acdc8;
+  -webkit-transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.floatCard:hover {
+  -webkit-transform: scale(1.1, 1.1);
+  transform: scale(1.1, 1.1);
+}
+
+.floatCard:hover::after {
+    opacity: 1;
+}
+
+h1 {
+  color: white;
+  font-weight: 800;
+  font-size: 6em
+}
+
+p {
+  color: #96f1f6;
+  font-weight: 200
+}
+
+.graph {
+  position: absolute; height:40vh; width:80vw; left: 2px; bottom: 2px;
+}
+
+
+</style>
+</head>
+<body>
+  <div id="fullpage">
+
+    <div class="section">
+        <div class="chart-container graph">
+            <canvas class="chart-container graph" id="myChart"></canvas>
+        </div>
+  <div class="container">
+        <div class="d-flex">
+          <!-- <h1 style="padding-bottom: 10px">Title API</h1> -->
+        </div>
+        <!-- <div class="d-flex justify-content-center">
+            <div class="card text-white bg-dark mb-3 floatCard">
+
+                <div class="card-body">
+                  <h5 class="card-title">Dark card title</h5>
+                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                </div>
+              </div>
+        </div> -->
+      </div>
+    </div>
+
+    <div class="section">
+        <div class="chart-container2">
+            <canvas class="chart-container graph" id="myChart2"></canvas>
+        </div>
+        <canvas width="1000" height="1000" style="width:500px;height:500px" id="cube"></canvas>
+    </div>
+    
+    <div class="section">
+        <div class="chart-container3">
+            <canvas class="chart-container graph" id="myChart3"></canvas>
+        </div>
+      </div>
+    <div class="section">Some section</div>
+  </div>
+
+  <script type="text/javascript" src="static/fullpage.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+<script type="text/javascript">
+    var myFullpage = new fullpage('#fullpage', {
+        sectionsColor: ['#1d243f', '#1d243f', '#1d243f', '1d243f', '#1d243f'],
+        anchors: ['firstPage', 'secondPage', '3rdPage', '4thpage', 'lastPage'],
+        menu: '#menu',
+        lazyLoad: true
+    });
+</script>
+<script>
+		// cube and circles
+		(function(){
+			var rx = 0;
+			var ry = 0;
+			var idx = 0;
+      var nextTick = 0
+      // var d6d6 = [0,0,0,0,0,0,0,0,0,0,0]
+			function step(timestamp) {
+        var nd2d6 = Math.floor(Math.random() * 6) + Math.floor(Math.random() * 6);
+        // d6d6[nd2d6] += 1;
+        var p = new Pinhole()
+				// draw the cube
+				p.drawCube(-0.3, -0.3, -0.3, 0.3, 0.3, 0.3)
+				// rotate a little on the X and Y axis.
+				p.rotate(Math.PI/3, Math.PI/6, 0)
+				p.rotate(rx, ry, 0)
+        p.colorize('#3acdc8')
+        p.end();
+				p.render(document.getElementById("cube"),{bgColor:'#1d243f'})
+				window.requestAnimationFrame(step);
+
+				rx += Math.PI*0.1*Math.abs(Math.sin(timestamp*5))/120; // rotate per step for the entire scene
+				ry += Math.PI*0.1*Math.abs(Math.sin(timestamp*5))/120; // rotate per step for the entire scene
+
+        if (timestamp>nextTick) {
+          nextTick = timestamp += 500;
+          myChart.data.datasets[0].data[nd2d6] += 1;
+          myChart.update();
+
+          myChart2.data.datasets[0].data[Math.floor(Math.random() * 6)] += 1;
+          myChart2.update();
+
+
+          myChart3.data.datasets[Math.floor(Math.random() * 4)].data[Math.floor(Math.random() * 13)] += 1;
+          myChart3.update();
+        // console.log(timestamp)
+        }
+			}
+			window.requestAnimationFrame(step);
+		}())
+  </script>
+  
+  <script>
+    
+    var graphOption = {
+            legend: {
+                display: false
+            },
+            tooltips: {
+              enabled: false
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: false,
+                        display: false //this will remove only the label
+                    },
+                    gridLines: {
+                      drawBorder: false,
+                      color: "rgba(0, 0, 0, 0)",
+                    },
+                    angleLines: {
+                      display: false,
+                      color: "rgba(255, 255, 255, 0.2)"
+                    },
+                    type: 'logarithmic'
+                }],
+                xAxes: [{
+                    ticks: {
+                        display: false //this will remove only the label
+                    },
+                    gridLines: {
+                      drawBorder: false,
+                      color: "rgba(0, 0, 0, 0)",
+                    },
+                    angleLines: {
+                      display: false,
+                      color: "rgba(255, 255, 255, 0.2)"
+                    }
+                }]
+            },
+            hover: {
+            // Overrides the global setting
+              mode: 'index'
+            }
+        }
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+            datasets: [{
+                label: '#',
+                data: [0,0,0,0,0,0,0,0,0,0,0],
+                backgroundColor:  'rgba(255, 255, 255, 0.3)',
+            }]
+        },
+        options: graphOption
+    });
+    myChart.canvas.parentNode.style.height = '10vh';
+    myChart.canvas.parentNode.style.width = '20vw';
+
+    var ctx2 = document.getElementById('myChart2').getContext('2d');
+    var myChart2 = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: ['1', '2', '3', '4', '5', '6'],
+            datasets: [{
+                label: '#',
+                data: [0,0,0,0,0,0],
+                backgroundColor:  'rgba(255, 255, 255, 0.3)',
+            }]
+        },
+        options: graphOption
+    });
+    myChart2.canvas.parentNode.style.height = '10vh';
+    myChart2.canvas.parentNode.style.width = '20vw';
+
+
+
+    var ctx3 = document.getElementById('myChart3').getContext('2d');
+    var myChart3 = new Chart(ctx3, {
+        type: 'bar',
+        data: {
+            labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'],
+            datasets: [{
+            label: 'Spade',
+            backgroundColor: 'rgba(100, 100, 100, 0.3)',
+            data: ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
+          }, {
+            label: 'Diamond',
+            backgroundColor: 'rgba(255, 255, 255, 0.3)',
+            data: ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']            
+          }, {
+            label: 'Heart',
+            backgroundColor: 'rgba(30, 30, 30, 0.3)',
+            data: ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']            
+          }, {
+            label: 'Club',
+            backgroundColor: 'rgba(170, 170, 170, 0.3)',
+            data: ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']            
+          }]
+        },
+        options: {
+            legend: {
+                display: false
+            },
+            tooltips: {
+              enabled: false
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        display: false //this will remove only the label
+                    },
+                    gridLines: {
+                      drawBorder: false,
+                      color: "rgba(0, 0, 0, 0)",
+                    },
+                    angleLines: {
+                      display: false,
+                      color: "rgba(255, 255, 255, 0.2)"
+                    },
+                    stacked: true,
+                    type: 'logarithmic'
+                }],
+                xAxes: [{
+                    ticks: {
+                        display: false //this will remove only the label
+                    },
+                    gridLines: {
+                      drawBorder: false,
+                      color: "rgba(0, 0, 0, 0)",
+                    },
+                    angleLines: {
+                      display: false,
+                      color: "rgba(255, 255, 255, 0.2)"
+                    },
+                    stacked: true,
+                }]
+            },
+            hover: {
+            // Overrides the global setting
+              mode: 'index'
+            }
+        }
+    });
+    myChart3.canvas.parentNode.style.height = '10vh';
+    myChart3.canvas.parentNode.style.width = '20vw';
+    </script>
+
+</body>
+</html>
+

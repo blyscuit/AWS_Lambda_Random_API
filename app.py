@@ -1,5 +1,5 @@
 import logging
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 import random
 import math
 
@@ -31,26 +31,8 @@ def card(event=None, context=None):
 def aaaa(event=None, context=None):
     logger.info('Lambda function invoked index()')
 
-    return '''
-    <html>
-    <body>
-
-    <h1>Random API</h1>
-
-    <a href="/api/coin"><p>/coin</p></a>
-
-
-    <a href="/api/dice"><p>/dice</p></a>
-
-
-    <a href="/api/card"><p>/card</p></a>
-
-
-    </body>
-    </html>
-
-
-    '''
+    
+    return render_template('index.html', message="message")
 
 if __name__ == '__main__':
     app.run(debug=True)
